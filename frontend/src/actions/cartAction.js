@@ -20,7 +20,7 @@ dispatch({
 localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
 }
 
-debugger;
+
 export const removeFromCart = (id) => async(dispatch,getState) =>{
 dispatch({
     type:CART_REMOVE_ITEM,

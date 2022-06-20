@@ -1,7 +1,8 @@
 import axios from "axios"
 import { LOGIN_REQUEST,LOGIN_SUCCESS,LOGIN_FAIL } from "../constants/userConstant"
 
-export const userLogin =(email,password) => async(dispatch) =>{
+
+export const Login =(email,password) => async(dispatch) =>{
     try {
         dispatch({
             type:LOGIN_REQUEST
@@ -12,6 +13,7 @@ export const userLogin =(email,password) => async(dispatch) =>{
             }
         }
         const {data} = await axios.post('/api/users/login',{email,password},config)
+    
 
         dispatch({
             type:LOGIN_SUCCESS,
