@@ -3,7 +3,7 @@ import { Link,  useLocation, useNavigate } from "react-router-dom";
 import {  Button, Row, Col, Form, Alert } from "react-bootstrap";
 
 import Loader from "../Components/loader"
-import { getUserDetail, Register } from "../actions/userAction";
+import { getUserDetail, Register,updateUserProfile } from "../actions/userAction";
 import { useDispatch,useSelector } from "react-redux";
 
 function ProfileScreen() {
@@ -19,6 +19,10 @@ function ProfileScreen() {
     
     const {userInfo} = userLogin
 
+    const userUpdateProfile = useSelector(state => state.userUpdateProfile)
+    
+    const {success} = userUpdateProfile
+
     const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -31,7 +35,7 @@ function ProfileScreen() {
     if(!userInfo){
       navigate('/login')
     }else{
-        if(!user.name){
+        if(!user?.name){
             dispatch(getUserDetail('profile'))
         }else{
             setName(user.name)
@@ -45,8 +49,13 @@ function ProfileScreen() {
     if(password !== confirmPassword){
         setMessage('passwords do not match')
     }else{
-
-        // udpate profile dispatch
+      dispatch(updateUserProfile({
+        id:user._id,
+        name,
+        email,
+        password
+      }))
+        
 
     }
   }
@@ -60,6 +69,13 @@ function ProfileScreen() {
         }
         {
             error && <Alert variant="danger">{error}</Alert>
+        }
+        {
+            success && setTimeout(() => {
+              return (
+                <Alert variant="success" >Profile Updated</Alert>
+              )
+            },300)
         }
         {
             loading && <Loader/>
