@@ -25,6 +25,8 @@ function CartScreen() {
   const dispatch = useDispatch();
 
   const cart = useSelector((state) => state.cart);
+  const user = useSelector(state => state.userLogin)
+  const {userInfo} = user
   const { cartItems } = cart;
   // console.log(cartItems);
 
@@ -42,7 +44,13 @@ function CartScreen() {
   };
 
  const checkOutHandler =() => {
-  navigate('/login?redirect=shipping')
+  if(userInfo){
+    navigate('/shipping')
+  }
+  else{
+
+    navigate('/login')
+  }
  }
 
   return (

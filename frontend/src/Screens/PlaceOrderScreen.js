@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
@@ -18,6 +18,14 @@ const PlaceOrderScreen = () => {
 
   const cart = useSelector((state) => state.cart);
 
+  cart.itemPrice = cart.cartItems.reduce((acc,item) => acc+ item.price * item.qty , 0)
+  cart.shippingPrice = cart.itemPrice > 100 ? 0 : 100
+  cart.taxPrice = Number((0.15*cart.itemPrice).toFixed(2))
+  cart.totalPrice = Number(cart.itemPrice + cart.shippingPrice + cart.taxPrice)
+
+  const placeOrderHandler = () => {
+    console.log("order");
+  };
   return (
     <>
       <CheckoutSteps step1 step2 step3 step4 />
@@ -44,32 +52,80 @@ const PlaceOrderScreen = () => {
                 <Alert>Your Cart is Empty</Alert>
               ) : (
                 <ListGroup variant="flush">
-                  {cart.cartItems.map((item, index) => {
-                    <ListGroupItem key="index">
-                      <Row>
-                        <Col md={1}>
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fluid
-                            rounded
-                          />
-                        </Col>
-                        <Col>
-                          <Link to={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
-                        </Col>
-                        <Col md={4}>
-                           {item.qty} x ${item.price} = ${item.qty * item.price}
-                        </Col>
-                      </Row>
-                    </ListGroupItem>;
+                  {cart.cartItems.map((item,index) => {
+                    return (
+                      <React.Fragment key={index}>
+                        {" "}
+                        <ListGroupItem>
+                          <Row>
+                            <Col md={1}>
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                fluid
+                                rounded
+                              />
+                            </Col>
+                            <Col>
+                              <Link to={`/product/${item.product}`}>
+                                {item.name}
+                              </Link>
+                            </Col>
+                            <Col md={4}>
+                              {item.qty} x ${item.price} = $
+                              {item.qty * item.price}
+                            </Col>
+                          </Row>
+                        </ListGroupItem>
+                      </React.Fragment>
+                    );
                   })}
                 </ListGroup>
               )}
             </ListGroupItem>
           </ListGroup>
+        </Col>
+        <Col md={4}>
+          <Card>
+            <ListGroup variant="flush">
+              <h2>Order Summary</h2>
+              <ListGroupItem>
+                <Row>
+                  <Col>Items</Col>
+                  <Col>${cart.itemPrice}</Col>
+                </Row>
+              </ListGroupItem>
+              <ListGroupItem>
+                <Row>
+                  <Col>Shipping</Col>
+                  <Col>${cart.shippingPrice}</Col>
+                </Row>
+              </ListGroupItem>
+              <ListGroupItem>
+                <Row>
+                  <Col>Tax</Col>
+                  <Col>${cart.taxPrice}</Col>
+                </Row>
+              </ListGroupItem>
+              <ListGroupItem>
+                <Row>
+                  <Col>Total</Col>
+                  <Col>${cart.totalPrice}</Col>
+                </Row>
+              </ListGroupItem>
+           
+              <Button
+                  type="button"
+                className="btn-block"
+              
+                  disabled={cart.cartItems === 0}
+                  onClick={placeOrderHandler}
+
+                >
+                  Place Order
+                </Button>
+            </ListGroup>
+          </Card>
         </Col>
       </Row>
     </>
