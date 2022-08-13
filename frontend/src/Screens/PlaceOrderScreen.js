@@ -10,21 +10,44 @@ import {
   Alert,
   ListGroupItem,
 } from "react-bootstrap";
+import { createOrder } from "../actions/orderAction";
 import CheckoutSteps from "../Components/CheckoutSteps";
-import { Link } from "react-router-dom";
+import { Link,  useNavigate } from "react-router-dom";
 
 const PlaceOrderScreen = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
+  const orderCreate = useSelector((state) => state.orderCreate)
+  const {order,success,error} = orderCreate
+  
   const cart = useSelector((state) => state.cart);
-
   cart.itemPrice = cart.cartItems.reduce((acc,item) => acc+ item.price * item.qty , 0)
   cart.shippingPrice = cart.itemPrice > 100 ? 0 : 100
   cart.taxPrice = Number((0.15*cart.itemPrice).toFixed(2))
   cart.totalPrice = Number(cart.itemPrice + cart.shippingPrice + cart.taxPrice)
 
+ React.useEffect(() => {
+if(success){
+  navigate(`/order/${order._id}`)
+}
+ },[navigate,success])
+
+
   const placeOrderHandler = () => {
-    console.log("order");
+    // console.log("order");
+   
+    dispatch(
+      createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        shippingPrice: cart.shippingPrice,
+        taxPrice: cart.taxPrice,
+        totalPrice: cart.totalPrice,
+      })
+    )
   };
   return (
     <>
@@ -113,8 +136,10 @@ const PlaceOrderScreen = () => {
                   <Col>${cart.totalPrice}</Col>
                 </Row>
               </ListGroupItem>
-           
-              <Button
+           <ListGroupItem>
+           {error && <Alert variant="danger">{error}</Alert>}
+           </ListGroupItem>
+               <Button
                   type="button"
                 className="btn-block"
               
