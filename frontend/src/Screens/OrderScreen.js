@@ -26,7 +26,7 @@ const OrderScreen = () => {
 
   React.useEffect(() => {
     dispatch(getOrderDetails(id));
-  }, []);
+  }, [dispatch,id]);
 
   if (!loading) {
     //   Calculate prices
